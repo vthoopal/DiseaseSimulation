@@ -33,7 +33,7 @@ to setup
   create-life ;;Spawns new population
     ask patches[
     set contaminatedCurrently false
-    set contaminationDuration (round(contaminationDecayTime * (0.8 + (random-float 0.4)))* 4)
+    set contaminationDuration (round(contaminationDecayTime * (0.8 + (random-float 0.4)))* 4);; add variance to decay rate
   ]
 
 end
@@ -258,8 +258,8 @@ SLIDER
 totalPopulation
 totalPopulation
 0
-300
-300.0
+1000
+100.0
 1
 1
 NIL
@@ -274,7 +274,7 @@ infectionProbability
 infectionProbability
 0
 100
-76.0
+100.0
 1
 1
 %
@@ -308,9 +308,9 @@ true
 "" ""
 PENS
 "infected currently" 1.0 0 -2674135 true "" "plotxy time count turtles with [infectedCurrently]"
-"never infected" 1.0 0 -9276814 true "" "plotxy time count turtles with[(not infectedCurrently) and (not wasInfected) ]"
-"recovered" 1.0 0 -13840069 true "" "plotxy time count turtles with [wasInfected]"
-"total" 1.0 0 -11221820 true "" "plotxy time count turtles "
+"never infected" 1.0 0 -7500403 true "" "plotxy time count turtles with[(not infectedCurrently) and (not wasInfected) ]"
+"recovered" 1.0 0 -11085214 true "" "plotxy time count turtles with [wasInfected]"
+"total" 1.0 0 -6459832 true "" "plotxy time count turtles "
 
 SLIDER
 24
@@ -321,7 +321,7 @@ infectionDuration
 infectionDuration
 0
 336
-49.0
+2.0
 1
 1
 hours
@@ -336,7 +336,7 @@ mortalityRate
 mortalityRate
 0
 100
-100.0
+60.0
 1
 1
 %
@@ -387,7 +387,7 @@ CHOOSER
 quarantineMode
 quarantineMode
 "None" "selfIsolate" "Sick" "All"
-2
+0
 
 SLIDER
 22
@@ -398,7 +398,7 @@ percentAsymptomatic
 percentAsymptomatic
 0
 100
-43.0
+0.0
 1
 1
 %
@@ -411,7 +411,7 @@ SWITCH
 108
 avoidInfected
 avoidInfected
-0
+1
 1
 -1000
 
@@ -497,6 +497,12 @@ Experiment with testing how much of an effect various factors have on the rate a
 
 Try adding additional factors such as healthcare facilities, vaccinations etc
 
+## TO BE ADDED
+
+- disease strength(viral load)
+- duration of contact
+- closed/open environment
+- carrier?
 
 
 ## CREDITS AND REFERENCES
