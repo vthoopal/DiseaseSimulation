@@ -461,6 +461,8 @@ Each person tests for infection upon coming on contact with an infected person o
 
 ## HOW TO USE IT
 
+The first time you activate the model, setup needs to be clicked twice to render the people correctly.
+
 Avoid infected means the non infected people try to avoid coming in contact with infected(symptomatic) people
 
 The colours are:
