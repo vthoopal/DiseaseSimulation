@@ -22,7 +22,7 @@ patches-own
 [
   contaminationDuration
   contaminatedCurrently
-
+  outdoors?
 ]
 
 ;;SETUP
@@ -31,10 +31,20 @@ patches-own
 to setup
   clear-all ;;removes previous simulation
   create-life ;;Spawns new population
+  ask n-of (round(1089 * OutdoorPercent / 100)) patches[
+    set Outdoors? true
+    set pcolor turquoise - 2]
     ask patches[
     set contaminatedCurrently false
-    set contaminationDuration (round(contaminationDecayTime * (0.8 + (random-float 0.4)))* 4);; add variance to decay rate
+    ifelse outdoors? = true
+    [set pcolor turquoise - 2
+       set contaminationDuration round(((contaminationDecayTime * (0.8 + (random-float 0.4)))* 4) * OutdoorEffect)
+    ]
+    [set pcolor black
+     set contaminationDuration (round(contaminationDecayTime * (0.8 + (random-float 0.4)))* 4)
+    ]
   ]
+
 
 end
 
@@ -100,6 +110,7 @@ end
 
 to testForDisease
   ;; check if infected
+
   if (not infectedCurrently) and (random 100 < infectionProbability);; roles a dice to determine whether they get infected
     [ifelse wasInfected[if canbeReinfected[beInfected ]]
       [beInfected]]
@@ -135,7 +146,8 @@ end
 
 to contaminate
   set contaminatedCurrently true
-  set pcolor blue
+  ifelse outdoors? = true [set pcolor cyan]
+  [set pcolor blue]
 end
 
 to testForContamination
@@ -147,8 +159,16 @@ to decay
   set contaminationDuration contaminationDuration - 1
   if contaminationDuration < 1
   [set contaminatedCurrently false
-  set pcolor black
-  set contaminationDuration (round(contaminationDecayTime * (0.8 + (random-float 0.4)))* 4) ]
+    ifelse outdoors? = true
+    [set pcolor turquoise - 2
+       set contaminationDuration round(((contaminationDecayTime * (0.8 + (random-float 0.4)))* 4) * OutdoorEffect)
+    ]
+    [set pcolor black
+     set contaminationDuration (round(contaminationDecayTime * (0.8 + (random-float 0.4)))* 4)
+    ]
+
+
+  ]
 end
 
 to checkQuarantine;; instructions on who can move in a quarantine
@@ -217,10 +237,10 @@ ticks
 30.0
 
 BUTTON
-453
-457
-517
-490
+341
+461
+405
+494
 Setup
 setup
 NIL
@@ -234,10 +254,10 @@ NIL
 1
 
 BUTTON
-545
-459
-608
-492
+433
+463
+496
+496
 go
 go\n
 T
@@ -251,10 +271,10 @@ NIL
 0
 
 SLIDER
-251
-458
-423
-491
+710
+385
+882
+418
 totalPopulation
 totalPopulation
 0
@@ -266,15 +286,15 @@ NIL
 HORIZONTAL
 
 SLIDER
-26
+27
 215
-198
+199
 248
 infectionProbability
 infectionProbability
 0
 100
-100.0
+64.0
 1
 1
 %
@@ -309,19 +329,20 @@ true
 PENS
 "infected currently" 1.0 0 -2674135 true "" "plotxy time count turtles with [infectedCurrently]"
 "never infected" 1.0 0 -7500403 true "" "plotxy time count turtles with[(not infectedCurrently) and (not wasInfected) ]"
-"recovered" 1.0 0 -11085214 true "" "plotxy time count turtles with [wasInfected]"
+"Recovered" 1.0 0 -11085214 true "" "plotxy time count turtles with [wasInfected]"
 "total" 1.0 0 -6459832 true "" "plotxy time count turtles "
+"Not infected" 1.0 0 -955883 true "" "plotxy time count turtles with [not infectedCurrently]"
 
 SLIDER
-24
-267
-205
-300
+25
+268
+206
+301
 infectionDuration
 infectionDuration
 0
 336
-2.0
+43.0
 1
 1
 hours
@@ -329,40 +350,40 @@ HORIZONTAL
 
 SLIDER
 25
-314
+315
 205
-347
+348
 mortalityRate
 mortalityRate
 0
 100
-60.0
+3.0
 1
 1
 %
 HORIZONTAL
 
 SWITCH
-21
-456
-170
-489
+22
+457
+172
+490
 canbeReinfected
 canbeReinfected
-1
+0
 1
 -1000
 
 SLIDER
-21
-359
-204
-392
+22
+360
+205
+393
 contaminationDecayTime
 contaminationDecayTime
 0
 336
-2.0
+0.0
 1
 1
 hrs
@@ -380,9 +401,9 @@ livePopulation
 11
 
 CHOOSER
-29
+30
 110
-167
+168
 155
 quarantineMode
 quarantineMode
@@ -390,10 +411,10 @@ quarantineMode
 0
 
 SLIDER
-22
-407
-208
-440
+23
+408
+209
+441
 percentAsymptomatic
 percentAsymptomatic
 0
@@ -405,9 +426,9 @@ percentAsymptomatic
 HORIZONTAL
 
 SWITCH
-33
+34
 75
-166
+167
 108
 avoidInfected
 avoidInfected
@@ -417,9 +438,9 @@ avoidInfected
 
 SLIDER
 0
-32
+33
 185
-65
+66
 quarantineObedience
 quarantineObedience
 0
@@ -441,14 +462,54 @@ Quarantine setting
 1
 
 TEXTBOX
-48
-193
-198
-212
+49
+194
+199
+213
 Disease settings
 15
 0.0
 1
+
+TEXTBOX
+731
+358
+881
+377
+Location settings
+15
+0.0
+1
+
+SLIDER
+713
+436
+886
+469
+OutdoorPercent
+OutdoorPercent
+0
+100
+0.0
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+713
+480
+886
+513
+OutdoorEffect
+OutdoorEffect
+0
+2
+0.0
+0.1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -465,12 +526,18 @@ The first time you activate the model, setup needs to be clicked twice to render
 
 Avoid infected means the non infected people try to avoid coming in contact with infected(symptomatic) people
 
-The colours are:
+The people colours are:
 
-- Gray never infected
+- GRAY never infected
 - VIOLET infected but asymtomatic
 - RED infected
 - GREEN recovered
+
+The patch colours are:
+- Turquoise outdoors safe
+- Black indoors safe
+- Blue indoor contaminated
+- Cyan outdoor contaminated
 
 The explaination of factors is as follows:
 
@@ -503,7 +570,6 @@ Try adding additional factors such as healthcare facilities, vaccinations etc
 
 - disease strength(viral load)
 - duration of contact
-- closed/open environment
 - carrier?
 
 
